@@ -1,0 +1,88 @@
+#代码勿动
+options:
+	prefix: &c[系统]
+	
+on load:
+	message "&e[NoTrade]&a插件已加载" to console
+
+on unload:
+	message "&e[NoTrade]&a插件已卸载" to console
+	
+command /NoTrade <number=1>:
+	usage: /NoTrade [页数] - 显示NoTrade插件的帮助
+	description: 显示NoTrade插件的帮助
+	trigger:
+		if argument 1 is 1:
+			message "&f=== &b&lNoTrade - &a页面 1/1&f==="
+			message "&a/NoTrade [页数]    &c&l查看帮助"
+			message "&a/playerbox    &c&l打开仓库"
+			message "&a/chest    &c&l打开垃圾桶,清理禁止交易物品"
+
+command /playerbox:
+	permission: notrade.playerbox
+	permission message: §c[系统] §a你没有权限!
+	trigger:
+		close player's inventory
+		open chest with 6 rows named "&8&l[&b&l%player%&8&l]&a的仓库" to player
+		send "&c[系统] &a你打开了仓库"
+		set {_p} to player
+		loop 54 times:
+			if {_b} is not set:
+				set {_b} to 0
+				if {PlayerBoxSlot::%{_p}%.%{_b}%} is set:
+					format slot {_b} of player with {PlayerBoxSlot::%{_p}%.%{_b}%} to close
+				add 1 to {_b}
+			else:
+				if {PlayerBoxSlot::%{_p}%.%{_b}%} is set:
+					format slot {_b} of player with {PlayerBoxSlot::%{_p}%.%{_b}%} to close
+				add 1 to {_b}
+		delete {_b}
+		delete {_p}
+		stop
+		
+on inventory close:
+	if name of player's current inventory is "&8&l[&b&l%player%&8&l]&a的仓库":
+		send "&c[系统] &a你关闭了仓库"
+		set {_p} to player
+		loop 54 times:
+			if {_c} is not set:
+				set {_c} to 0
+				if slot {_c} of player's current inventory is set:
+					set {PlayerBoxSlot::%{_p}%.%{_c}%} to slot {_c} of player's current inventory
+				add 1 to {_c}
+			else:
+				if slot {_c} of player's current inventory is set:
+					set {PlayerBoxSlot::%{_p}%.%{_c}%} to slot {_c} of player's current inventory
+				add 1 to {_c}
+		delete {_c}
+		stop
+		
+command /chest:
+	trigger:
+		open chest with 3 rows named "&8&l[&b&l%player%&8&l]&a的垃圾桶" to player
+		send "&c[系统] &a你打开了垃圾桶"
+		stop
+		
+on inventory close:
+	if name of player's current inventory is "&8&l[&b&l%player%&8&l]&a的垃圾桶":
+		send "&c[系统] &a你关闭了垃圾桶"
+		stop
+	
+on player drop:
+	if lore of event-item contains "&3&l禁止交易":
+		cancel event
+		send "{@prefix} &a你无法丢弃该物品!" to event-player
+		
+on mor.inventory click:
+	if lore of event-item contains "禁止交易":
+		if inventory name of player's current inventory contains "仓库" or "crafting" or "垃圾桶":
+			stop
+		else:
+			cancel event
+			send "{@prefix} &a禁止交易物品不可放入!"
+			
+on command "gs sell" or "jd add" or "mp sell" or "market create" or "market add":
+	if lore of player's tool contains "禁止交易":
+		cancel event
+		send "{@prefix} &a该物品禁止上架全球市场!"
+	

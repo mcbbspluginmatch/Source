@@ -1,0 +1,39 @@
+﻿Interface:
+  Name: "&0&l友谊值奖励界面"
+Reward:
+  0:
+    Name: "&e1000 金币"
+    Id: 399
+    Value: 10
+    Lore:
+    - "&f目前你与 &c%player% &f的友谊值已达到 &c%value%"
+    - "&f领取这个奖励,需达到 &c%is_value% &f点友谊值"
+    - " "
+    - "&f是否达成可领取条件: %dc_value%"
+    - "&f是否已领取过此奖励: %is_lq%"
+    Commands:
+    - "eco give %player% 1000"
+  1:
+    Name: "&e2000 金币"
+    Id: 399
+    Value: 20
+    Lore:
+    - "&f目前你与 &c%player% &f的友谊值已达到 &c%value%"
+    - "&f领取这个奖励,需达到 &c%is_value% &f点友谊值"
+    - " "
+    - "&f是否达成可领取条件: %dc_value%"
+    - "&f是否已领取过此奖励: %is_lq%"
+    Commands:
+    - "eco give %player% 2000"
+  2:
+    Name: "&e3000 金币"
+    Id: 399
+    Value: 30
+    Lore:
+    - "&f目前你与 &c%player% &f的友谊值已达到 &c%value%"
+    - "&f领取这个奖励,需达到 &c%is_value% &f点友谊值"
+    - " "
+    - "&f是否达成可领取条件: %dc_value%"
+    - "&f是否已领取过此奖励: %is_lq%"
+    Commands:
+    - "eco give %player% 3000"

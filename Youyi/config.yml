@@ -1,0 +1,118 @@
+﻿#经验分享(支持NpcMods)
+Expshare:
+  #是否开启
+  enable: true
+  #双方距离半径
+  radius: 5
+  #分享百分比
+  #例如: 写20 则百分之20分享给另一方剩百分之80是自己的
+  percent: 20
+
+#友谊保护
+BaoHu:
+  #是否开启攻击保护
+  #开启后建立小船后双方无法攻击对方
+  enable: true
+  #开启此功能上方选项将失效
+  #已测1.7.10,其余版本得FlanMod未测,请自行测试
+  Flan: false
+
+#财产共享
+Shared:
+  #是否允许使用金币共享
+  Money: true
+  #是否允许使用点卷共享
+  Points: true
+
+#友谊值任务(双方次数共享)
+#number  —  每日可完成次数
+#vaule  —  每次完成增加多少友谊值
+#time  —  时长
+YouyiValue:
+   #HH:MM 制
+   ResetTime: "06:00"
+   #建立小船(每次建立小船自动增加)
+   Establish:
+     vaule: 2
+   #分享经验
+   Expshare:
+     number: 2
+     vaule: 1
+   #小船聊天模式聊满时长
+   Chat:
+     number: 1
+     vaule: 2
+     #单位: 分钟
+     time: 1
+   #共享金币(限一次)
+   gx_Money:
+     vaule: 2
+   #共享点卷(限一次)
+   gx_Points:
+     vaule: 2
+
+#其余设置
+Set:
+  Info:
+    Name: "&6友谊小船数据详细"
+    sjName: "&f小船信息"
+    Lore:
+    - "&f友谊小船信息详细>>>"
+    - "  &f挚友&8&l: &c%player%"
+    - "  &f友谊值&8&l: &c%value%"
+    - "&f仓库储存财产详细>>>"
+    - "  &f金币数量&8&l: &c%money_ck%"
+    - "  &f点卷数量&8&l: &c%points_ck%"
+    - "&f功能状态详细>>>"
+    - "  &f金币共享&8&l: &c%money_gx%"
+    - "  &f点卷共享&8&l: &c%points_gx%"
+    - "  &f经验分享&8&l: &c%exp_switch%"
+    - "  &f无伤保护&8&l: &c%baohu_switch%"
+    YouyiValue:
+      Name: "&f友谊值奖励"
+      Lore:
+      - "&f友谊小船信息详细>>>"
+      - "  &f挚友&8&l: &c%player%"
+      - "  &f友谊值&8&l: &c%value%"
+      - " "
+      - "&3当友谊值达到要求时即可领取奖励"
+      - "&c每一份奖励一个账号只可获得一次"
+    Task:
+      Name: "&f友谊值 - 日常任务"
+      Lore:
+      - "&f友谊小船信息详细>>>"
+      - "  &f挚友&8&l: &c%player%"
+      - "  &f友谊值&8&l: &c%value%"
+      - " "
+      - "&f本日任务剩余次数>>>"
+      - "  &f(&c1&f)分享经验给对方&8&l: &c%exp%"
+      - "  &f(&c2&f)使用小船聊天模式聊满时长&8&l: &c%chat%"
+      - "&f特殊任务>>>"
+      - "  &f(&c2&f)建立小船&8&l: &c%jl%"
+      - "  &f(&c2&f)共享金币&8&l: &c%gx_Money%"
+      - "  &f(&c2&f)共享点卷&8&l: &c%gx_Points%"
+      - " "
+      - "&3每日早上 &c06:00 &3自动重置任务次数"
+
+#仓库
+Warehouse:
+  Name: "&6&l友谊仓库"
+  size: 27
+  Kaitong:
+    Money: 1000
+  item:
+    Money:
+     - "&c&l左键 &3存入金币"
+     - "&c&l右键 &3取出金币"
+     - ""
+     - "&3目前存储金币数量: &c%money%"
+    Points:
+     - "&c&l左键 &3存入点卷"
+     - "&c&l右键 &3取出点卷"
+     - ""
+     - "&3目前存储点卷数量: &c%points%"
+  Message:
+    Open: "&f友谊 &b> &a友谊共享仓库已打开"
+    wKaiTong: "&f友谊 &b> &c你们的友谊小船还未开通 &6&l共享仓库"
+    sbKaiTong: "&f友谊 &b> &7共享金币财产不足 &c%money% &7无法开通"
+    cgKaiTong: "&f友谊 &b> &a已花费 &c%money% &a共享金币财产,开通了 &6&l共享仓库"

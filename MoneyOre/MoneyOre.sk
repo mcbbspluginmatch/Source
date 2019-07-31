@@ -1,0 +1,135 @@
+on load:
+	load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+	if yaml "MoneyOre" is empty:
+		set yaml value "Stone" from "MoneyOre" to "5"
+		set yaml value "Coal" from "MoneyOre" to "10"
+		set yaml value "Iron" from "MoneyOre" to "30"
+		set yaml value "Gold" from "MoneyOre" to "50"
+		set yaml value "RedStone" from "MoneyOre" to "5"
+		set yaml value "Lapis" from "MoneyOre" to "5"
+		set yaml value "Diamond" from "MoneyOre" to "100"
+		set yaml value "Emerald" from "MoneyOre" to "100"
+		save yaml "MoneyOre" without extra lines between nodes
+	set {MoneyOre::Stone} to yaml value "Stone" from "MoneyOre"
+	set {MoneyOre::Coal} to yaml value "Coal" from "MoneyOre"
+	set {MoneyOre::Iron} to yaml value "Iron" from "MoneyOre"
+	set {MoneyOre::Gold} to yaml value "Gold" from "MoneyOre"
+	set {MoneyOre::RedStone} to yaml value "RedStone" from "MoneyOre"
+	set {MoneyOre::Lapis} to yaml value "Lapis" from "MoneyOre"
+	set {MoneyOre::Diamond} to yaml value "Diamond" from "MoneyOre"
+	set {MoneyOre::Emerald} to yaml value "Emerald" from "MoneyOre"
+	
+	
+on break of Stone:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Stone}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Stone}*2%$" to player
+	else:
+		add {MoneyOre::Stone} to the player's account
+		send action bar "&f+&e%{MoneyOre::Stone}%$" to player
+on break of Coal ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Coal}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Coal}*2%$" to player
+	else:
+		add {MoneyOre::Coal} to the player's account
+		send action bar "&f+&e%{MoneyOre::Coal}%$" to player
+on break of Iron ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Iron}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Iron}*2%$" to player
+	else:
+		add {MoneyOre::Iron} to the player's account
+		send action bar "&f+&e%{MoneyOre::Iron}%$" to player
+on break of Gold ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Gold}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Gold}*2%$" to player
+	else:
+		add {MoneyOre::Gold} to the player's account
+		send action bar "&f+&e%{MoneyOre::Gold}%$" to player
+on break of RedStone ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::RedStone}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::RedStone}*2%$" to player
+	else:
+		add {MoneyOre::RedStone} to the player's account
+		send action bar "&f+&e%{MoneyOre::RedStone}%$" to player
+on break of Lapis ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Lapis}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Lapis}*2%$" to player
+	else:
+		add {MoneyOre::Lapis} to the player's account
+		send action bar "&f+&e%{MoneyOre::Lapis}%$" to player
+on break of Diamond ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Diamond}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Diamond}*2%$" to player
+	else:
+		add {MoneyOre::Diamond} to the player's account
+		send action bar "&f+&e%{MoneyOre::Diamond}%$" to player
+on break of Emerald ore:
+	wait 0.1 seconds
+	if player has the permission "MoneyOre.two":
+		add {MoneyOre::Emerald}*2 to the player's account
+		send action bar "&f+&e%{MoneyOre::Emerald}*2%$" to player
+	else:
+		add {MoneyOre::Emerald} to the player's account
+		send action bar "&f+&e%{MoneyOre::Emerald}%$" to player
+	
+	
+		
+command /MoneyOre [<text>] [<number>]:
+	permission: MoneyOre.admin
+	aliases: /mo
+	trigger:
+		if arg-1 is "Stone":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Stone" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Stone &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "Iron":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Iron" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Iron &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "Gold":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Gold" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Gold &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "RedStone":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "RedStone" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a RedStone &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "Lapis":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Lapis" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Lapis &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "Diamond":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Diamond" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Diamond &f的金币设置为 &e%arg-2%$&f."
+		if arg-1 is "Emerald":
+			if arg-2 is set:
+				load yaml "plugins/MoneyOre/config.yml" as "MoneyOre"
+				set yaml value "Emerald" from "MoneyOre" to "%arg-2%"
+				save yaml "MoneyOre" without extra lines between nodes
+				message "&f你把&a Emerald &f的金币设置为 &e%arg-2%$&f."

@@ -1,0 +1,82 @@
+on skript load:
+	delete {随机箱子::*}
+on rightclick on any shulker box:
+	player has permission "SpecialChest.use"
+	if difference between {随机箱子::%location of event-block%.Used} and now < 10 minutes:
+		set {_随机箱子::%location of event-block%.Time} to unix timestamp of {随机箱子::%location of event-block%.Used}
+		set {_随机箱子::%location of event-block%.Timenow} to unix timestamp of now
+		set {_随机箱子::%location of event-block%.Time1} to {_随机箱子::%location of event-block%.Timenow} - {_随机箱子::%location of event-block%.Time}
+		send "&6&l提示 &f[&c这里的物资已经被其他人拿走了，物资重新出现还有 &f%600-({_随机箱子::%location of event-block%.Time1}/1000)% &c秒&f]"
+	else:
+		set {随机箱子::%location of event-block%.Used} to now
+		set {_randomnumber} to random integer between 2 and 5
+		wait a tick
+		loop {_randomnumber} times:
+			set {_随机箱子::%location of event-block%.slot} to random integer between 1 and 27
+			set {_随机箱子.随机物品} to random integer between 1 and {随机箱子.循环次数}
+			set {_随机箱子::%location of event-block%.ItemNumber} to random integer between 1 and {特殊箱子.物品数量}
+			set slot {_随机箱子::%location of event-block%.slot} of player's current inventory to {_随机箱子::%location of event-block%.ItemNumber} of {材料箱子::%{_随机箱子.随机物品}%}
+
+command /SpecialChest [<text>] [<text>] [<number>]:
+	aliases: /随机箱子
+	permission: SpecialChest.op
+	permission message: 权限不足
+	trigger:
+		if arg-1 is "add" or "添加":
+			if arg-2 is "数量" or "Number":
+				set {特殊箱子.物品数量} to arg-3
+				send "&6&l随机箱子&8> &f最大生成物品数量已设置为 &c%arg-3%" to player
+				stop
+			else:
+				add tool of player to {材料箱子::*}
+				send "&6&l随机箱子&8> &f已成功添加手上物品进入随机物品列表中" to player
+				loop {材料箱子::*}:
+					set {随机箱子.循环次数} to loop-index parsed as integer
+				stop
+		else if arg-1 is "list" or "物品列表":
+			send "&b&m               &f[&6箱子内物品列表&f]&b&m               " to player
+			send ""
+			loop {材料箱子::*}:
+				send "&c&l%loop-index%  &e-  %loop-value%" to player
+			send ""
+			send "&b&m                                             " to player
+			stop
+		else if arg-1 is "delete" or "清除":
+			delete {材料箱子::*}
+			send "&6&l随机箱子&8> &c已删除掉全部的保存物品！" to player
+		else if arg-1 is "help" or "帮助":
+			send "&6&l随机箱子 &f插件帮助 "
+			send ""
+			send "&f/随机箱子 添加 &c或 &f/SpecialChest add"
+			send "&a将手上物品添加到会随机的物品内"
+			send ""
+			send "&f/随机箱子 清除物品 &c或 &f/SpecialChest DeleteItem"
+			send "&a删除掉全部已经保存的物品"
+			send ""
+			send "&f/随机箱子 物品列表 &c或 &f/SpecialChest list"
+			send "&a列出已经设置的随机物品"
+			send ""
+			send "&f/随机箱子 设置数量 (数量) &c或 &f/SpecialChest setNumber (max-num)"
+			send "&a设置箱子内物品最大随机数量"
+			send ""
+			send "&f/随机箱子 帮助 &c或 &f/SpecialChest help"
+			send "&a显示本页面"
+			stop
+		else:
+			send "&6&l随机箱子 &f插件帮助 "
+			send ""
+			send "&f/随机箱子 添加 &c或 &f/SpecialChest add"
+			send "&a将手上物品添加到会随机的物品内"
+			send ""
+			send "&f/随机箱子 清除物品 &c或 &f/SpecialChest DeleteItem"
+			send "&a删除掉全部已经保存的物品"
+			send ""
+			send "&f/随机箱子 物品列表 &c或 &f/SpecialChest list"
+			send "&a列出已经设置的随机物品"
+			send ""
+			send "&f/随机箱子 添加 数量 (数量) &c或 &f/SpecialChest add Number (max-num)"
+			send "&a设置箱子内物品最大随机数量"
+			send ""
+			send "&f/随机箱子 帮助 &c或 &f/SpecialChest help"
+			send "&a显示本页面"
+			stop

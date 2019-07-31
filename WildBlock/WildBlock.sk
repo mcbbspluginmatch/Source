@@ -1,0 +1,342 @@
+function WildBlock_load():
+	
+	set {_systemTime} to system time
+	
+	if folder "plugins/WildBlock" doesn't exists:
+	
+		create folder "plugins/WildBlock"
+		create folder "plugins/WildBlock/blocks"
+		create folder "plugins/WildBlock/types"
+		
+		set {_configPath} to "plugins/WildBlock/config.yml"
+		create file {_configPath}
+		wf "##方块刷新时间（秒）" to {_configPath}
+		wf "updateCooldown: 600" to {_configPath}
+		
+		set {_disableBlocksPath} to "plugins/WildBlock/disableBlocks.yml"
+		create file {_disableBlocksPath}
+		wf "##在下面列表中的方块将被禁止右键互动" to {_disableBlocksPath}
+		wf "##需要填写Skript内部ID" to {_disableBlocksPath}
+		wf "##警告： 不同Skript版本有不同的内部ID" to {_disableBlocksPath}
+		wf "list:" to {_disableBlocksPath}
+		wf "- ""anvil""" to {_disableBlocksPath}
+		wf "- ""anythingYouWant""" to {_disableBlocksPath}
+		
+		set {_typeExamplePath} to "plugins/WildBlock/types/银叶草.yml"
+		create file {_typeExamplePath}
+		wf "##下面所填的物品皆填写MythicMobs物品的内部ID" to {_typeExamplePath}
+		wf "" to {_typeExamplePath}
+		wf "##采集时需手持的工具，写不存在的物品就不需要工具" to {_typeExamplePath}
+		wf "tool: 草药剪" to {_typeExamplePath}
+		wf "##掉落的物品名称及数量" to {_typeExamplePath}
+		wf "drop:" to {_typeExamplePath}
+		wf "  name: 银叶草" to {_typeExamplePath}
+		wf "  amount: 1" to {_typeExamplePath}
+		wf "##是否在最近的空气方块显示高亮文字，而不是在方块本身位置？（防止实体方块看不清）" to {_typeExamplePath}
+		wf "near: true" to {_typeExamplePath}
+	
+	load yml "plugins/WildBlock/config.yml" as "WildBlock_config"
+	set {WildBlock_updateCooldown} to yml value "updateCooldown" of "WildBlock_config"
+	set {WildBlock_updateTimer} to 0
+	
+	load yml "plugins/WildBlock/disableBlocks.yml" as "WildBlock_disableBlocks"
+	set {_list::*} to yml list "list" of "WildBlock_disableBlocks"
+	loop {_list::*}:
+		set {WildBlock_disableBlocks::%loop-value%} to true
+	
+	loop files in dir including sub dirs "plugins/WildBlock/types":
+		set {_name} to name of file loop-value
+		set {_path} to relative path of loop-value
+		send "[WildBlock] 正在加载采集类型 %{_name}%" to console
+		load yml "%{_path}%" as "WildBlock_type_%{_name}%"
+		add {_name} to {WildBlock_typeList::*}
+	
+	loop files in dir including sub dirs "plugins/WildBlock/blocks":
+		set {_name} to name of file loop-value
+		set {_path} to relative path of loop-value
+		#send "[WildBlock] 正在加载方块 %{_name}%" to console
+		load yml "%{_path}%" as "WildBlock_blockData_%{_name}%"
+		add {_name} to {WildBlock_blockDataList::*}
+	
+	WildBlock_blockLoad()
+	
+	send "[WildBlock] 加载耗时 %system time - {_systemTime}% ms" to console
+	
+	send "[WildBlock] 定制Skript插件联系 QQ:1508179881" to console
+	send "[WildBlock] Skript交流群 590388354" to console
+		
+function WildBlock_unload():
+
+	WildBlock_blockUnload()
+
+	delete {WildBlock_updateCooldown}
+	delete {WildBlock_updateTimer}
+	unload yml "WildBlock_config"
+	
+	delete {WildBlock_disableBlocks::*}
+	
+	loop {WildBlock_blockDataList::*}:
+		unload yml "WildBlock_blockData_%loop-value%"
+	delete {WildBlock_blockDataList::*}
+	
+	loop {WildBlock_typeList::*}:
+		unload yml "WildBlock_type_%loop-value%"
+	delete {WildBlock_typeList::*}
+	
+on script load:
+	WildBlock_load()
+	
+on script unload:
+	WildBlock_unload()	
+
+function WildBlock_createBlockHd(loc: location,id: text,text: text,near: boolean):
+
+	if holo object "WildBlock_%{_id}%" exists:
+		stop trigger
+	
+	set {_hdLoc} to {_loc}
+	
+	if {_near} is false:
+		set {_hdLoc} to {_loc}
+	else:
+		loop 6 times:
+			add {_loc} to {_locs::*}
+			
+		add 1 to y loc of {_locs::1}
+		add -1 to y loc of {_locs::2}	
+		add 1 to x loc of {_locs::3}
+		add -1 to x loc of {_locs::4}
+		add 1 to z loc of {_locs::5}
+		add -1 to z loc of {_locs::6}
+			
+		loop {_locs::*}:
+			if block at loop-value is air:
+				set {_hdLoc} to loop-value
+				exit loop
+			
+	add 0.1 to y loc of {_hdLoc}
+	create holo object {_text} with id "WildBlock_%{_id}%" at {_hdLoc}
+	
+function WildBlock_blockLoad():
+
+	loop {WildBlock_blockDataList::*}:
+	
+		set {_locs::*} to split loop-value by "_"
+		set {_x} to {_locs::1} parsed as number
+		set {_y} to {_locs::2} parsed as number
+		set {_z} to {_locs::3} parsed as number
+		set {_world} to {_locs::4} parsed as world
+		
+		set {_name} to "%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+		set {_loc} to location at {_x}, {_y}, {_z} of {_world}
+		set {_blockItem} to yml value "block" of "WildBlock_blockData_%{_name}%"
+		set {_dataValue} to yml value "dataValue" of "WildBlock_blockData_%{_name}%"
+		set {_type} to yml value "type" of "WildBlock_blockData_%{_name}%"
+		
+		set {_blockItem} to {_blockItem} parsed as item
+		set block at {_loc} to {_blockItem}
+		set data value of block at {_loc} to {_dataValue}
+		
+		set {_near} to yml value "near" of "WildBlock_type_%{_type}%"
+		WildBlock_createBlockHd({_loc},{_name},{_type},{_near})
+		
+	send "[WildBlock] 成功加载所有方块。" to console
+		
+every 1 second:
+	add 1 to {WildBlock_updateTimer}
+	{WildBlock_updateTimer} is {WildBlock_updateCooldown}
+	set {WildBlock_updateTimer} to 0
+	WildBlock_blockLoad()
+		
+function WildBlock_blockUnload():
+
+	loop {WildBlock_blockDataList::*}:
+		set {_locs::*} to split loop-value by "_"
+		set {_x} to {_locs::1} parsed as number
+		set {_y} to {_locs::2} parsed as number
+		set {_z} to {_locs::3} parsed as number
+		set {_world} to {_locs::4} parsed as world
+		set {_name} to "%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+		set {_type} to yml value "type" of "WildBlock_blockData_%{_name}%"
+		
+		if holo object "WildBlock_%{_name}%" exists:
+			delete holo object "WildBlock_%{_name}%"
+		
+function WildBlock_addBlock(x: number,y: number,z: number,world: world,type: text):
+
+	set {_loc} to location at {_x}, {_y}, {_z} of {_world}
+	set {_name} to "%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	
+	load yml "plugins/WildBlock/blocks/%{_x}%_%{_y}%_%{_z}%_%{_world}%.yml" as "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	
+	set yml value "block" of "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%" to type of block at {_loc}
+	set yml value "dataValue" of "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%" to data value of block at {_loc}
+	set yml value "type" of "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%" to {_type}
+	
+	save yml "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	
+	add "%{_x}%_%{_y}%_%{_z}%_%{_world}%" to {WildBlock_blockDataList::*}
+	
+	set {_near} to yml value "near" of "WildBlock_type_%{_type}%"
+	WildBlock_createBlockHd({_loc},{_name},{_type},{_near})
+	
+function WildBlock_removeBlock(x: number,y: number,z: number,world: world,):
+
+	set {_loc} to location at {_x}, {_y}, {_z} of {_world}
+	set {_name} to "%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	
+	if holo object "WildBlock_%{_name}%" exists:
+		delete holo object "WildBlock_%{_name}%"
+	
+	set {_i} to 0
+	loop {WildBlock_blockDataList::*}:
+		add 1 to {_i}
+		if loop-value is {_name}:
+			delete {WildBlock_blockDataList::%{_i}%}
+			exit loop
+	
+	unload yml "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	delete file "plugins/WildBlock/blocks/%{_x}%_%{_y}%_%{_z}%_%{_world}%.yml"	
+	
+on break:
+	set {_x} to x loc of block
+	set {_y} to y loc of block
+	set {_z} to z loc of block
+	set {_world} to "%player's world%"
+	set {_name} to "%{_x}%_%{_y}%_%{_z}%_%{_world}%"
+	if yml "WildBlock_blockData_%{_name}%" is loaded:
+		
+		cancel event
+		set {_type} to yml value "type" of "WildBlock_blockData_%{_name}%"
+				
+		if yml value "tool" of "WildBlock_type_%{_type}%" is set:
+		
+			set {_tool} to yml value "tool" of "WildBlock_type_%{_type}%"
+			set {_tool} to mythic item {_tool}
+			{_tool} is set
+			if tool is not {_tool}:
+				send "&e你必须使用 &f%name of {_tool}% &e采集它。"
+				stop trigger
+		
+		delete block
+		delete holo object "WildBlock_%{_name}%"
+		set {_dropName} to yml value "drop.name" of "WildBlock_type_%{_type}%"
+		set {_amount} to yml value "drop.amount" of "WildBlock_type_%{_type}%"
+		set {_drop} to mythic item {_dropName}
+		
+		if {_drop} is set:
+		
+			if {_amount} is not set:
+				set {_amount} to 1
+			
+			set amount of {_drop} to {_amount}
+			
+			drop {_drop} at block
+			
+			send "&e你采集了 &f%{_amount}% &e个 %name of {_drop}% &e。"
+				
+	else:
+		if player don't have permission "op":
+			cancel event
+			stop trigger
+	stop trigger
+	
+on rightclick:
+	block is set
+	player don't have permission "op"
+	
+	{WildBlock_disableBlocks::%type of block%} is set
+	cancel event
+	
+	stop trigger
+		
+on build:
+	player don't have permission "op"
+	cancel event
+	stop trigger
+	
+on bucket empty:
+	player don't have permission "op"
+	cancel event
+	stop trigger
+	
+on bucket fill:
+	player don't have permission "op"
+	cancel event	
+	stop trigger
+
+command /wbl [<text>] [<text>]:
+	trigger:
+	
+		sender don't have permission "op":
+			send "nmsl看什么看?"
+			stop trigger
+	
+		arg-1 is not set:
+		
+			send "&e/wbl reload     &a重载插件。"
+			send "&e/wbl add <类型> &a设置指针指向的方块为某种采集类型。"
+			send "&e/wbl remove     &a移除指针指向的方块。"
+			send "&e/wbl update     &a刷新所有采集方块。"
+			send "&e/wbl list       &a查看已加载的采集类型。"
+			send "&e/wbl type       &a查看指针指向的方块的Skript内部名。"
+			
+			stop trigger
+			
+		arg-1 is "reload":
+		
+			WildBlock_unload()
+			WildBlock_load()
+			send "&e重载完毕。"
+			
+			stop trigger
+			
+		arg-1 is "add":
+			set {_type} to arg-2
+			if yml "WildBlock_type_%{_type}%" is not loaded:
+				send "&e该类型不存在。"
+				stop trigger
+			set {_loc} to location of target block
+			set {_x} to x loc of {_loc}
+			set {_y} to y loc of {_loc}
+			set {_z} to z loc of {_loc}
+			set {_world} to world of {_loc}
+			WildBlock_addBlock({_x},{_y},{_z},{_world},{_type})
+			send "&e添加成功。"
+			
+			stop trigger
+			
+		arg-1 is "remove":
+			set {_loc} to location of target block
+			set {_x} to x loc of {_loc}
+			set {_y} to y loc of {_loc}
+			set {_z} to z loc of {_loc}
+			set {_world} to world of {_loc}
+			if yml "WildBlock_blockData_%{_x}%_%{_y}%_%{_z}%_%{_world}%" is not loaded:
+				send "&e该方块没有被设置为采集方块。"
+				stop trigger
+			WildBlock_removeBlock({_x},{_y},{_z},{_world})
+			send "&e移除成功。"
+			
+			stop trigger
+			
+		arg-1 is "update":
+			WildBlock_blockLoad()
+			send "&e刷新成功。"
+			
+			stop trigger
+			
+		arg-1 is "list":
+			send "&e已经加载的采集类型："
+			loop {WildBlock_typeList::*}:
+				send "- %loop-value%"
+			
+			stop trigger	
+			
+		arg-1 is "type":
+			send "指向方块的Skript内部名是： &e%type of target block%"
+			
+			stop trigger
+			
+		stop trigger
+		

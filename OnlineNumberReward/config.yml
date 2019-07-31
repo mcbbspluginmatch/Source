@@ -1,0 +1,43 @@
+#每个达到number人数执行指令的格式
+# a1 a2 a3 a4 a5 a...x固定写法
+# number 要达到的人数
+# ifrun 是否执行过指令 false 执行过了，由系统自动识别
+# console 控制台指令
+# opcmd OP指令
+# %player% 代表所有玩家
+# msg 执行后提示的信息
+#
+# by长生诀
+#
+a1:
+  number: 1  
+  msg: '&a[系统] &c在线人数达到20人,奖励已经发放'
+  isrun: 1
+  console: 
+  - 'say %player%  获得垃圾一件'
+  - 'say 这是人数达到1的奖励'
+  opcmd: 
+  - 'say %player%  执行某些插件，只能用OP执行的give获得垃圾一件'
+  - 'say 这是人数达到1以op身份的奖励'
+
+a2:
+  number: 20
+  msg: '&a[系统] &c在线人数达到20人,奖励已经发放'
+  isrun: 1
+  console: 
+  - 'say %player%  a2console'
+  - 'say a1console'
+  opcmd: 
+  - 'say %player%  a2opcmd'
+  - 'say a1opcmd'
+
+#插件isrun数据重置时间
+#isrun = 0 则不表示已经执行过该项目下指令，将不在执行
+#23点59分59秒
+#请勿修改
+shi: 23
+fen: 59
+miao: 59
+#记录数据
+#记录当前玩家在线人数
+servernumber: 0

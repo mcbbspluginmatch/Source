@@ -1,0 +1,11 @@
+name: Youyi
+main: ersha.qq1508444061.youyi.Main
+author: 1508444061
+version: 1.0
+softdepend: [Vault, PlayerPoints, PlaceholderAPI]
+depends: [PlaceHolderAPI]
+
+commands:
+   yyi:
+   yyck:
+   yygx:

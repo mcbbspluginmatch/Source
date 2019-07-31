@@ -1,0 +1,299 @@
+
+	
+#代码勿动
+options:
+	prefix: %{Ride.Prefix}%
+	仓库的行数: {仓库行数}
+	仓库的名字: {仓库名字}
+	config: file "plugins/Ride/config.yml"
+	message: file "plugins/Ride/message.yml"
+function Rideyy_reload(n: number,p: player):
+	if {message1} is not set:
+		set {message1} to "被攻击导致下马"
+		set yaml value "攻击下马提示" of {@message} to {message1}
+	else:
+		set {message1} to yaml value "攻击下马提示" of {@message}
+	if {message2} is not set:
+		set {message2} to "&f[&e坐骑&f]不能同时骑多个坐骑"
+		set yaml value "重复坐骑提示" of {@message} to {message2}
+	else:
+		set {message2} to yaml value "重复坐骑提示" of {@message}
+	if {message3} is not set:
+		set {message3} to "&f[&e坐骑&f]你打开了坐骑仓库"
+		set yaml value "打开仓库提示" of {@message} to {message3}
+	else:
+		set {message3} to yaml value "打开仓库提示" of {@message}
+	if {message4} is not set:
+		set {message4} to "&f[&e坐骑&f]&c你没有召唤坐骑的权限"
+		set yaml value "权限提示" of {@message} to {message4}
+	else:
+		set {message4} to yaml value "权限提示" of {@message}
+	if {message5} is not set:
+		set {message5} to "&f[&e坐骑&f]&c你以下马"
+		set yaml value "下马提示" of {@message} to {message5}
+	else:
+		set {message5} to yaml value "下马提示" of {@message}
+	if {message6} is not set:
+		set {message6} to "&f[&e坐骑&f]&c正在冷却中"
+		set yaml value "冷却提示" of {@message} to {message6}
+	else:
+		set {message6} to yaml value "冷却提示" of {@message}
+	if {message7} is not set:
+		set {message7} to "&f[&e坐骑&f]&e冷却结束"
+		set yaml value "冷却完毕提示" of {@message} to {message7}
+	else:
+		set {message7} to yaml value "冷却完毕提示" of {@message}
+	stop
+function Ride_reload(n: number,p: player):
+	set {_ping} to now
+	if {Ride.Prefix} is not set:
+		set {Ride.Prefix} to "&f[&e坐骑&f]"
+		set yaml value "Prefix" of {@config} to {Ride.Prefix}
+	else:
+		set {Ride.Prefix} to yaml value "Prefix" of {@config}
+	if {下马提示} is not set:
+		set {下马提示} to "true"
+		set yaml value "下马提示" of {@config} to {下马提示}
+	else:
+		set {下马提示} to yaml value "下马提示" of {@config}
+	if {战斗冷却} is not set:
+		set {战斗冷却} to 10
+		set yaml value "战斗冷却" of {@config} to {战斗冷却}
+	else:
+		set {战斗冷却} to yaml value "战斗冷却" of {@config}
+	if {仓库行数} is not set:
+		set {仓库行数} to 5
+		set yaml value "仓库行数" of {@config} to {仓库行数}
+	else:
+		set {仓库行数} to yaml value "仓库行数" of {@config}
+	if {仓库名字} is not set:
+		set {仓库名字} to "马库"
+		set yaml value "仓库名字" of {@config} to {仓库名字}
+	else:
+		set {仓库名字} to yaml value "仓库名字" of {@config}
+	if {普通马速度} or {普通马跳跃} is not set:
+		set {普通马速度} or {普通马跳跃} to 0.2
+	if {骷髅马速度} or {骷髅马跳跃} is not set:
+		set {骷髅速度} or {骷髅跳跃} to 0.2
+	if {驴速度} or {驴跳跃} is not set:
+		set {驴速度} or {驴跳跃} to 0.2
+	if {僵尸马速度} or {僵尸马跳跃} is not set:
+		set {僵尸马速度} or {僵尸马跳跃} to 0.2
+	send "{@prefix} &7重载成功" to all ops
+	send "{@prefix} &7耗时: &f%difference between {_ping} and now%" to all ops
+	stop
+on script load:
+	Ride_reload(0,{_p})
+	Rideyy_reload(0,{_p})
+command /坐骑 [<text>] [<text>] [<text>] [<number>]:
+	permission: admin
+	permission message: {@prefix}&c没使用权限
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "help":
+				play sound "block.note.pling" with volume 0.3 at player 
+				message "&a&l&m一一一一一{@prefix}&a&l&m一一一一一"
+				message "&e/坐骑 help &f指令大全          "     
+				message "&e/坐骑 reload &f重载配置文件"
+				message "&e/坐骑 setsx  &f查看设置属性帮助"
+				message "&e/坐骑 setzhw &f查看设置召唤物帮助"
+				message "&a&l&m一一一一一{@prefix}&a&l&m一一一一一"
+			if arg-1 is "reload":
+				if arg-2 is set:
+					if arg-2 is "config":
+						Ride_reload(0,{_p})
+					if arg-2 is "message":
+						send "{@prefix}重载语言文件中"
+						set {_ping} to now
+						Rideyy_reload(0,{_p})
+						send "{@prefix} &7重载成功" to all ops
+						send "{@prefix} &7耗时: &f%difference between {_ping} and now%" to all ops
+				else:
+					play sound "block.note.pling" with volume 0.3 at player 
+					message "{@prefix}/坐骑 reload config 重载配置文件"
+					message "{@prefix}/坐骑 reload message 重载语言文件"
+			if arg-1 is "setsx":
+				play sound "block.note.pling" with volume 0.3 at player
+				SetAttribute(arg-2,arg-3,arg-4,player)
+			if arg-1 is "setzhw":
+				play sound "block.note.pling" with volume 0.3 at player
+				setzhw(arg-2,player)
+		else:
+			send "{@prefix}输入/坐骑 help查看帮助" to player
+			play sound "block.note.bell" with volume 0.3 at player 
+function setzhw(种类:text,p:player):
+	if {_种类} is set:
+		if {_种类} is not set:
+			send "{@prefix}请输入马的种类" to {_p}
+		else:
+			if {_种类} is "普通马" or "骷髅马" or "驴" or "僵尸马":
+				if {_p}'s tool is not air:
+					set {%{_种类}%召唤物} to {_p}'s tool
+					send "{@prefix}设置手中物品为%{_种类}%的召唤物" to {_p}
+				else:
+					send "{@prefix}你手中没有物品" to {_p}
+			else:
+				send "{@prefix}目前只有普通马、骷髅马,僵尸马和驴！" to {_p}
+	else:
+		send "{@prefix}&a使用方法:/坐骑 setzhw 种类" to {_p}
+		send "{@prefix}&a目前种类有:驴,普通马,骷髅马,僵尸马" to {_p}
+function SetAttribute(种类:text,属性:text,数值:number,p:player):
+	if {_种类} is set:
+		if {_种类} is not set:
+			send "请输入马的种类" to {_p}
+		else:
+			if {_种类} is "普通马" or "骷髅马" or "驴" or "僵尸马":
+				if {_属性} is not set:
+					send "请输入马的属性" to {_p}
+				else:
+					if {_属性} is "速度" or "跳跃":
+						if {_数值} is set:
+							set {%{_种类}%%{_属性}%} to {_数值}
+							send "(&c!&f)设置%{_种类}%的%{_属性}%为&a%{%{_种类}%%{_属性}%}%" to {_p}
+						else:
+							send "{@prefix}请输入数字！" to {_p}
+			else:
+				send "{@prefix}目前只有普通马、骷髅马,僵尸马和驴" to {_p}
+	else:
+		send "{@prefix}&a使用方法:/坐骑 setsx [马的种类] [属性名] [数值]" to {_p}
+		send "{@prefix}&a目前种类有:驴,普通马,骷髅马,僵尸马" to {_p}
+		send "{@prefix}&a目前属性有:速度,跳跃" to {_p}
+on Rightclick:
+	if Event-item is {普通马召唤物} or {骷髅马召唤物} or {驴召唤物} or {僵尸马召唤物}:
+		if player has permission "ride.zh":
+			if player's vehicle is not set:
+				if {战斗cd检测::%player%} is not set:
+					if player's tool is {普通马召唤物}:
+						play sound "entity.horse.land" with volume 0.3 at player 
+						set {骑::%player%} to true
+						set {仓库::%player%} to true
+						spawn 1 horse at player
+						set {_马} to last spawned entity
+						add "{CustomName:""&a%player%的&e普通马"",Tame:1}" to nbt of {_马}
+						add "{Invulnerable:1}" to nbt of {_马}
+						add "{Attributes:[{Name:generic.movementSpeed,Base:%{普通马速度}%},{Name:horse.jumpStrength,Base:%{普通马跳跃}%}]}" to nbt of {_马}
+						add "{SaddleItem:{id:""minecraft:saddle"",Count:1b,Damage:0s}}" to nbt of {_马}
+						add "{ArmorItem:{id:""minecraft:diamond_horse_armor"",Count:1b,Damage:0s}}" to nbt of {_马}
+						make player ride {_马}
+						stop
+					if player's tool is {骷髅马召唤物}:
+						play sound "entity.horse.land" with volume 0.3 at player 
+						set {骑::%player%} to true
+						set {仓库::%player%} to true
+						spawn 1 Skeleton horse at player
+						set {_马} to last spawned entity
+						add "{CustomName:""&a%player%的&e骷髅马"",Invulnerable:1b,Tame:1}" to nbt of {_马}
+						add "{Attributes:[{Name:generic.movementSpeed,Base:%{骷髅马速度}%},{Name:horse.jumpStrength,Base:%{骷髅马跳跃}%}]}" to nbt of {_马}
+						add "{SaddleItem:{id:""minecraft:saddle"",Count:1b,Damage:0s}}" to nbt of {_马}
+						add "{ArmorItem:{id:""minecraft:diamond_horse_armor"",Count:1b,Damage:0s}}" to nbt of {_马}
+						make player ride {_马}
+						stop
+					if player's tool is {僵尸马召唤物}:
+						play sound "entity.horse.land" with volume 0.3 at player 
+						set {骑::%player%} to true
+						set {仓库::%player%} to true
+						spawn 1 Undead horse at player
+						set {_马} to last spawned entity
+						add "{CustomName:""&a%player%的&e僵尸马"",Invulnerable:1b,Tame:1}" to nbt of {_马}
+						add "{Attributes:[{Name:generic.movementSpeed,Base:%{僵尸马速度}%},{Name:horse.jumpStrength,Base:%{僵尸马跳跃}%}]}" to nbt of {_马}
+						add "{SaddleItem:{id:""minecraft:saddle"",Count:1b,Damage:0s}}" to nbt of {_马}
+						add "{ArmorItem:{id:""minecraft:diamond_horse_armor"",Count:1b,Damage:0s}}" to nbt of {_马}
+						make player ride {_马}
+						stop
+					if player's tool is {驴召唤物}:
+						play sound "entity.horse.land" with volume 0.3 at player 
+						set {骑::%player%} to true
+						set {仓库::%player%} to true
+						spawn 1 Donkey at player
+						set {_马} to last spawned entity
+						add "{CustomName:""&a%player%的&e驴"",Invulnerable:1b,Tame:1}" to nbt of {_马}
+						add "{Attributes:[{Name:generic.movementSpeed,Base:%{驴速度}%},{Name:horse.jumpStrength,Base:%{驴跳跃}%}]}" to nbt of {_马}
+						add "{SaddleItem:{id:""minecraft:saddle"",Count:1b,Damage:0s}}" to nbt of {_马}
+						add "{ArmorItem:{id:""minecraft:diamond_horse_armor"",Count:1b,Damage:0s}}" to nbt of {_马}
+						make player ride {_马}
+						stop
+				else:
+					send "%{message6}%" to player
+			else:
+				send "%{message2}%" to player
+		else:
+			send "%{message4}%" to player
+on dismount:
+	if {骑::%player%} is true:
+		if {下马提示} is "true":
+			delete player's vehicle
+			set {骑::%player%} to false
+			set {仓库::%player%} to false
+			send "%{message5}%" to player
+			stop
+		if {下马提示} is "false":
+			delete player's vehicle
+			set {骑::%player%} to false
+			set {仓库::%player%} to false
+			stop
+On Damage:
+	if {骑::%victim%} is true:
+		attacker is a Entity
+		delete victim's vehicle
+		set {骑::%victim%} to false
+		set {仓库::%victim%} to false
+		send "%{message1}%" to victim
+		set {坐骑冷却::%victim%} to {战斗冷却}
+		set {战斗cd检测::%victim%} to "开"
+		loop {战斗冷却} times:
+			wait 1 second
+			remove 1 from {坐骑冷却::%victim%}
+			send victim title "&c坐骑战斗冷却中" with subtitle "&f%{坐骑冷却::%victim%}% &7秒"
+			if {坐骑冷却::%victim%} is 0:
+				delete {坐骑冷却::%victim%}
+				send "%{message7}%"  to victim
+				delete {战斗cd检测::%victim%}
+				stop
+on join:
+	if {战斗cd检测::%player%} is set:
+		delete {战斗cd检测::%player%}
+On Quit:
+	if {骑::%player%} is true:
+		delete player's vehicle
+		set {骑::%player%} to false
+		delete {坐骑冷却::%player%}
+		delete {战斗cd检测::%player%}
+		set {仓库::%player%} to false
+		stop
+on inventory open:
+	if {仓库::%player%} is true:
+		cancel event
+		close player's inventory
+		send "%{message3}%"
+		set {仓库::%player%} to false
+		open chest with {@仓库的行数} rows named {@仓库的名字} to player
+		set {__player} to player
+		loop 54 times:
+			if {_ck} is not set:
+				set {_ck} to 0
+				if {PlayerBoxSlot::%{__player}%.%{_ck}%} is set:
+					format slot {_b} of player with {PlayerBoxSlot::%{__player}%.%{_ck}%} to close
+				add 1 to {_ck}
+			else:
+				if {PlayerBoxSlot::%{__player}%.%{_ck}%} is set:
+					format slot {_ck} of player with {PlayerBoxSlot::%{__player}%.%{_ck}%} to close
+				add 1 to {_ck}
+		delete {_ck}
+		delete {_player}
+		stop
+on inventory close:
+	if name of player's current inventory is {@仓库的名字}:
+		set {__player} to player
+		loop 54 times:
+			if {_c} is not set:
+				set {_c} to 0
+				if slot {_c} of player's current inventory is set:
+					set {PlayerBoxSlot::%{__player}%.%{_c}%} to slot {_c} of player's current inventory
+				add 1 to {_c}
+			else:
+				if slot {_c} of player's current inventory is set:
+					set {PlayerBoxSlot::%{__player}%.%{_c}%} to slot {_c} of player's current inventory
+				add 1 to {_c}
+		delete {_c}
+		set {仓库::%player%} to true
+		stop

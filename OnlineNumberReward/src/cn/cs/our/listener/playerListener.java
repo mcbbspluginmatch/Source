@@ -16,19 +16,20 @@ import cn.cs.our.player.AdditionOrDecrease;
 
 public class playerListener implements Listener {
 	
-	//Íæ¼ÒÀë¿ª·şÎñÆ÷
+	//ç©å®¶ç¦»å¼€æœåŠ¡å™¨
 	@EventHandler
 	public void playerQuit(PlayerQuitEvent p) {
-		//ÈËÊı+1 servernumber
+		//äººæ•°+1 servernumber
+		//æ‹¼éŸ³ï¼Ÿå»ºè®®ä¸­æ–‡æ›´å¥½ â€”â€” mimimis
 		new AdditionOrDecrease().jian();
 
 	}
-	//Íæ¼Ò½øÈë·şÎñÆ÷
+	//ç©å®¶è¿›å…¥æœåŠ¡å™¨
 	@EventHandler
 	public void playerJoin(PlayerJoinEvent p) {
 		API config = new API();
 		config.getConfig();
-		//ÈËÊı+1 servernumber
+		//äººæ•°+1 servernumber
 		new AdditionOrDecrease().jia();
 
 		HashMap<String, Integer> numberHashMap = config.getNumberHashMap();
@@ -37,30 +38,30 @@ public class playerListener implements Listener {
 		HashMap<String, List<String>> opCmdHashMap = config.getOpCmdHashMap();
 		HashMap<String, String> msgHashMap = config.getMsgHashMap();
 
-		// »ñÈ¡ Ã¿¸öaµÄisrun
+		// è·å– æ¯ä¸ªaçš„isrun
 		for (String key : isRunHashMap.keySet()) {
-			// ÅĞ¶Ïis run Õæ¼Ù£¬ÎªÕæÔò»ñÈ¡number
+			// åˆ¤æ–­is run çœŸå‡ï¼Œä¸ºçœŸåˆ™è·å–number
 			if (isRunHashMap.get(key) == 1) {
-				// »ñÈ¡ Ã¿¸öaµÄnumber
+				// è·å– æ¯ä¸ªaçš„number
 				for (String key1 : numberHashMap.keySet()) {
-					// ÅĞ¶ÏÃ»Ö´ĞĞ¹ıµÄa1µÄnumberµÈ²»µÈÓÚ ÔÚÏßÈËÊı µÈÓÚÖ´ĞĞ½±ÀøÖ¸Áî
+					// åˆ¤æ–­æ²¡æ‰§è¡Œè¿‡çš„a1çš„numberç­‰ä¸ç­‰äº åœ¨çº¿äººæ•° ç­‰äºæ‰§è¡Œå¥–åŠ±æŒ‡ä»¤
 					if (numberHashMap.get(key1) == main.INSTANCE.getConfig().get("servernumber")) {
-						// »ñÈ¡¿ØÖÆÌ¨Ö¸Áî
+						// è·å–æ§åˆ¶å°æŒ‡ä»¤
 						List<String> list = consoleHashMap.get(key1.replaceAll(".number", "") + ".console");
-						// ·ûºÏµÄOPÖ¸Áî¼¯
+						// ç¬¦åˆçš„OPæŒ‡ä»¤é›†
 						List<String> list2 = opCmdHashMap.get(key1.replaceAll(".number", "") + ".opcmd");
-						//ÅĞ¶Ïa1 µÈ ÀïÃænumberµÄÖµºÍÔÚÏßÈËÊıÏàµÈ
+						//åˆ¤æ–­a1 ç­‰ é‡Œé¢numberçš„å€¼å’Œåœ¨çº¿äººæ•°ç›¸ç­‰
 						if (msgHashMap.get(key1.replaceAll(".number", "") + ".msg") != null) {
-							//±éÀúËùÓĞÍæ¼Ò
+							//éå†æ‰€æœ‰ç©å®¶
 							for (Player playersss : Bukkit.getOnlinePlayers()) {
-								//ÌáÊ¾ĞÅÏ¢
+								//æç¤ºä¿¡æ¯
 								playersss.sendMessage(msgHashMap.get(key1.replaceAll(".number", "") + ".msg"));
 							}
 						}
 						boolean conRun = conRun(list);
 						boolean opRun = opRun(list2);
 						if (conRun || opRun) {
-							//°Ñisrun£¬ÊÇ·ñÖ´ĞĞ¹ıa1µÈ ÉèÖÃÎª0  ÉèÖÃÎª0±íÊ¾Ö´ĞĞ¹ıÁË
+							//æŠŠisrunï¼Œæ˜¯å¦æ‰§è¡Œè¿‡a1ç­‰ è®¾ç½®ä¸º0  è®¾ç½®ä¸º0è¡¨ç¤ºæ‰§è¡Œè¿‡äº†
 							main.INSTANCE.getConfig().set(key1.replaceAll(".number", "") + ".isrun", 0);
 							main.INSTANCE.saveConfig();
 						}
@@ -72,7 +73,7 @@ public class playerListener implements Listener {
 
 	
 	
-	//Ö´ĞĞ¿ØÖÆÌ¨Ö¸Áî
+	//æ‰§è¡Œæ§åˆ¶å°æŒ‡ä»¤
 	private boolean conRun(List<String> list) {
 		if (list != null) {
 			for (String string : list) {
@@ -91,7 +92,7 @@ public class playerListener implements Listener {
 		}
 	}
 
-	//Ö´ĞĞOPÖ¸Áî
+	//æ‰§è¡ŒOPæŒ‡ä»¤
 	private boolean opRun(List<String> list) {
 		if (list != null) {
 			for (String str1 : list) {
